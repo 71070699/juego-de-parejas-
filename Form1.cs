@@ -12,12 +12,23 @@ namespace Juego_2_grupo3_parejas
 {
     public partial class Form1 : Form
     {
-        // Use this Random object to choose random icons for the squares
+        // firstClicked apunta al primer control Label
+        // que el jugador hace clic, pero será nulo
+        // si el jugador aún no ha hecho clic en una etiqueta
+        Label firstClicked = null;
+
+        // secondClicked apunta al segundo control Label
+        // que el jugador hace clic
+        Label secondClicked = null;
+
+
+
+        // Utilice este objeto aleatorio para elegir iconos aleatorios para los cuadrados
         Random random = new Random();
 
-        // Each of these letters is an interesting icon
-        // in the Webdings font,
-        // and each icon appears twice in this list
+        // Cada una de estas letras es un icono interesante
+        // en la fuente Webdings,
+        // y cada icono aparece dos veces en esta lista
         List<string> icons = new List<string>()
     {
         "!", "!", "N", "N", ",", ",", "k", "k",
@@ -49,7 +60,6 @@ namespace Juego_2_grupo3_parejas
             InitializeComponent();
             AssignIconsToSquares();
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -62,127 +72,73 @@ namespace Juego_2_grupo3_parejas
         /// <param name = "e"></param>
         private void label_Click(object sender, EventArgs e)
         {
-            Label clickedLabel = sender as Label;
-
-            if (clickedLabel != null)
             {
-                // Si la etiqueta en la que se hizo clic es negra, el jugador hizo clic
-                // un icono que ya ha sido revelado --
-                // ignora el clic
-                if (clickedLabel.ForeColor == Color.Black)
+                // El temporizador solo se activa después de dos no coincidentes
+                // Se han mostrado iconos al jugador,
+                // así que ignora cualquier clic si el temporizador está funcionando
+                if (timer1.Enabled == true)
                     return;
 
-                clickedLabel.ForeColor = Color.Black;
+                Label clickedLabel = sender as Label;
+
+                if (clickedLabel != null)
+                {
+                    // Si la etiqueta en la que se hizo clic es negra, el jugador hizo clic
+                    // un icono que ya ha sido revelado --
+                    // ignora el clic
+                    if (clickedLabel.ForeColor == Color.Black)
+                        return;
+
+                    // Si firstClicked es nulo, este es el primer icono
+                    // en el par en el que el jugador hizo clic,
+                    // así que establezca firstClicked en la etiqueta que el jugador
+                    // hace clic, cambia su color a negro y regresa
+                    if (firstClicked == null)
+                    {
+                        firstClicked = clickedLabel;
+                        firstClicked.ForeColor = Color.Black;
+                        return;
+                    }
+
+                    // Si el jugador llega tan lejos, el temporizador no
+                    // en ejecución y firstClicked no es nulo,
+                    // por lo que este debe ser el segundo icono en el que el jugador hizo clic
+                    // Establecer su color en negro
+                    secondClicked = clickedLabel;
+                    secondClicked.ForeColor = Color.Black;
+
+                    // Si el jugador llega tan lejos, el jugador
+                    // hizo clic en dos iconos diferentes, así que inicie el
+                    // temporizador (que esperará tres cuartos de
+                    // un segundo, y luego esconde los íconos)
+                    timer1.Start();
+                }
             }
-    
-        
-    }
-}
-/// <summary>
-/// Every label's Click event is handled by this event handler
-/// </summary>
-/// <param name="sender">The label that was clicked</param>
-/// <param name="e"></param>
-private void label_Click(object sender, EventArgs e)
-{
-    Label clickedLabel = sender as Label;
 
-    if (clickedLabel != null)
-    {
-        // If the clicked label is black, the player clicked
-        // an icon that's already been revealed --
-        // ignore the click
-        if (clickedLabel.ForeColor == Color.Black)
-            return;
-
-        // If firstClicked is null, this is the first icon 
-        // in the pair that the player clicked,
-        // so set firstClicked to the label that the player 
-        // clicked, change its color to black, and return
-        if (firstClicked == null)
-        {
-            firstClicked = clickedLabel;
-            firstClicked.ForeColor = Color.Black;
-
-            return;
-        }
-    }
-}
-/// <summary>
-/// This timer is started when the player clicks 
-/// two icons that don't match,
-/// so it counts three quarters of a second 
-/// and then turns itself off and hides both icons
-/// </summary>
-/// <param name="sender"></param>
-/// <param name="e"></param>
-private void timer1_Tick(object sender, EventArgs e)
-{
-    object timer1 = null;
-    // Stop the timer
-    object p = timer1.Stop();
-
-    object firstClicked = null;
-    // Hide both icons
-    firstClicked.Fore Color = firstClicked.BackColor;
-    object secondClicked = null;
-    secondClicked.ForeColor = secondClicked.BackColor;
-
-    // Reset firstClicked and secondClicked 
-    // so the next time a label is
-    // clicked, the program knows it's the first click
-    firstClicked = null;
-    secondClicked = null;
-}/// <summary>
-/// Every label's Click event is handled by this event handler
-/// </summary>
-/// <param name="sender">The label that was clicked</param>
-/// <param name="e"></param>
-private void label_Click(object sender, EventArgs e)
-{
-    object timer1 = null;
-    // The timer is only on after two non-matching 
-    // icons have been shown to the player, 
-    // so ignore any clicks if the timer is running
-    if (timer1.Enabled == true)
-    {
-        return;
-    }
-
-    Label clickedLabel = sender as Label;
-
-    if (clickedLabel != null)
-    {
-        // If the clicked label is black, the player clicked
-        // an icon that's already been revealed --
-        // ignore the click
-        if (clickedLabel.ForeColor == Color.Black)
-            return;
-
-        object firstClicked = null;
-        // If firstClicked is null, this is the first icon
-        // in the pair that the player clicked, 
-        // so set firstClicked to the label that the player 
-        // clicked, change its color to black, and return
-        if (firstClicked == null)
-        {
-            firstClicked = clickedLabel;
-            return;
         }
 
-        Label
+        /// <resumen>
+        /// Este temporizador se inicia cuando el jugador hace clic
+        /// dos iconos que no coinciden,
+        /// por lo que cuenta tres cuartos de segundo
+        /// y luego se apaga y oculta ambos íconos
+        /// </summary>
+        /// <param name = "sender"> </param>
+        /// <param name = "e"> </param>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            // Detén el cronómetro
+            timer1.Stop();
 
-                // If the player gets this far, the timer isn't
-                // running and firstClicked isn't null,
-                // so this must be the second icon the player clicked
-                // Set its color to black
-                secondClicked = clickedLabel;
-        secondClicked.ForeColor = Color.Black;
+            // Ocultar ambos iconos
+            firstClicked.ForeColor = firstClicked.BackColor;
+            secondClicked.ForeColor = secondClicked.BackColor;
 
-        // If the player gets this far, the player 
-        // clicked two different icons, so start the 
-        // timer (which will wait three quarters of 
-        // a second, and then hide the icons)
-        object p = timer1.Start();
+            // Restablecer firstClicked y secondClicked
+            // así que la próxima vez que una etiqueta sea
+            // se hace clic, el programa sabe que es el primer clic
+            firstClicked = null;
+            secondClicked = null;
+        }
     }
 }
