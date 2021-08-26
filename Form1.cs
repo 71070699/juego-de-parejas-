@@ -107,6 +107,19 @@ namespace Juego_2_grupo3_parejas
                     secondClicked = clickedLabel;
                     secondClicked.ForeColor = Color.Black;
 
+                    // Verifica si el jugador ganó
+                    CheckForWinner();
+
+                    // Si el jugador hizo clic en dos iconos coincidentes, manténgalos
+                    // ennegrezca y reinicie firstClicked y secondClicked
+                    // para que el jugador pueda hacer clic en otro icono
+                    if (firstClicked.Text == secondClicked.Text)
+                    {
+                        firstClicked = null;
+                        secondClicked = null;
+                        return;
+                    }
+
                     // Si el jugador llega tan lejos, el jugador
                     // hizo clic en dos iconos diferentes, así que inicie el
                     // temporizador (que esperará tres cuartos de
@@ -139,6 +152,34 @@ namespace Juego_2_grupo3_parejas
             // se hace clic, el programa sabe que es el primer clic
             firstClicked = null;
             secondClicked = null;
+        }
+
+
+        /// <resumen>
+        /// Verifique cada ícono para ver si coincide, por
+        /// comparando su color de primer plano con su color de fondo.
+        /// Si todos los iconos coinciden, el jugador gana
+        /// </summary>
+        private void CheckForWinner()
+        {
+            // Revise todas las etiquetas en TableLayoutPanel,
+            // comprobando cada uno para ver si su icono coincide
+            foreach (Control control in tableLayoutPanel1.Controls)
+            {
+                Label iconLabel = control as Label;
+
+                if (iconLabel != null)
+                {
+                    if (iconLabel.ForeColor == iconLabel.BackColor)
+                        return;
+                }
+            }
+
+            // Si el bucle no regresó, no encontró
+            // cualquier ícono incomparable
+            // Eso significa que el usuario ganó. Muestre un mensaje y cierre el formulario
+            MessageBox.Show("¡Has coincidido con todos los íconos!", "Felicitaciones");
+            Close();
         }
     }
 }
